@@ -1,4 +1,5 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
+import { IsBoolean, IsOptional } from 'class-validator';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @InputType({ isAbstract: true }) // 직접 주입해서 사용하는 것이 아니라 확장해서 사용하는 것. 이 클래스가 실제로
@@ -14,9 +15,11 @@ export class Restaurant {
   @Column()
   name: string;
 
-  @Field((type) => Boolean)
-  @Column()
-  isVegan: boolean;
+  @Field((type) => Boolean, { defaultValue: true })
+  @Column({ default: true })
+  @IsOptional()
+  @IsBoolean()
+  isVegan?: boolean;
 
   @Field((type) => String)
   @Column()

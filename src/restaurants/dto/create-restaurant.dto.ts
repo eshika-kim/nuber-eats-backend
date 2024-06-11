@@ -9,4 +9,4 @@ import { Restaurant } from '../entities/retaurant.entity';
 // 현재는 부모클래스인 엔티티가 ObjectType이고
 // dto는 InputType을 사용하길 원하므로 이런식으로 설정할 수도있다,
 export class CreateRestaurantDto extends OmitType(Restaurant, ['id']) {}
-//export class CreateRestaurantDto extends OmitType(Restaurant, ['id'], ㅑㅞㅕ) {}
+//export class CreateRestaurantDto extends OmitType(Restaurant, ['id']) {}
