@@ -64,4 +64,8 @@ export class UsersService {
       };
     }
   }
+
+  async findById(id: number) {
+    return await this.users.findOneBy({ id });
+  }
 }
