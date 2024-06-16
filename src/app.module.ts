@@ -17,6 +17,7 @@ import { User } from './users/entities/user.entity';
 import { JwtModule } from './jwt/jwt.module';
 import { JwtMiddleware } from './jwt/jwt.middleware';
 import { AuthModule } from './auth/auth.module';
+import { Verification } from './users/entities/verification.entity';
 
 @Module({
   imports: [
@@ -41,9 +42,9 @@ import { AuthModule } from './auth/auth.module';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD, // ps는 localhost에서는 pw를 물어보지 않도록 설정되어 있음 아무거나 써도됨
       database: process.env.DB_DATABASE,
-      // synchronize: process.env.NODE_ENV !== 'prod',
+      synchronize: process.env.NODE_ENV !== 'prod',
       logging: true,
-      entities: [Restaurant, User],
+      entities: [Restaurant, User, Verification],
     }),
     GraphQLModule.forRoot({
       autoSchemaFile: true,

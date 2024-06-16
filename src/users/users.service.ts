@@ -5,13 +5,15 @@ import { Injectable } from '@nestjs/common';
 import { CreateAccountInput } from './dto/create-account.dto';
 import { LoginInput } from 'src/restaurants/dto/login.dto';
 import { JwtService } from 'src/jwt/jwt.service';
-import { UserProfileInput } from './dto/user-profile.dto';
 import { EditProfileInput } from './dto/edit-profile.dto';
+import { Verification } from './entities/verification.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private readonly users: Repository<User>,
+    @InjectRepository(Verification)
+    private readonly verification: Repository<Verification>,
     private readonly jwtService: JwtService,
   ) {}
 
@@ -28,7 +30,11 @@ export class UsersService {
         // make error
         return { ok: false, error: 'There is a user with that email already' };
       }
-      await this.users.save(this.users.create({ email, password, role }));
+      const user = await this.users.save(
+        this.users.create({ email, password, role }),
+      );
+      await this.verification.save(this.verification.create({ user }));
+      return { ok: true };
     } catch (e) {
       //make error
       return { ok: false, error: "Couldn't create" };
@@ -76,11 +82,12 @@ export class UsersService {
     // spread 연산자를 이용해 ...editProfileInput을 사용해도 됨
     // return await this.users.update(userId, { email, password });
     // => typeorm의 update는 특정 entity를 불러내서 저장되는 것이 아니라 일치하는 것을 그냥 업데이트하고
-    // 없으면 새로 저장할 수 있는 기능이므로 사용하는 것이 권장되지 않는다.
+    // 일치하는 것이 없으면 아무일도 일어나지 않아 dto의 BeforeUpdate가 실행되지 않는다.
     const user = await this.users.findOneBy({ id: userId });
     // 해당하는 entity를 불러온 후
     if (email) user.email = email;
     if (password) user.password = password;
+    await this.verification.save(this.verification.create({ user }));
     // 저장하고
     return await this.users.save(user);
     // db에 save하면 Beforeupdate hook 이 불러와지는 것을 확인할 수 있다.
