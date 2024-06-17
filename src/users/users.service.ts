@@ -111,10 +111,9 @@ export class UsersService {
       // 저장하고
       await this.users.save(user);
       // db에 save하면 Beforeupdate hook 이 불러와지는 것을 확인할 수 있다.
-      return;
-      {
-        ok: true;
-      }
+      return {
+        ok: true,
+      };
     } catch (e) {
       return {
         ok: false,
@@ -131,7 +130,9 @@ export class UsersService {
       });
       if (verification) {
         verification.user.verified = true;
-        this.users.save(verification.user);
+        await this.users.save(verification.user);
+        // 유저 인증 후 삭제
+        await this.verification.delete(verification.id);
         return {
           ok: true,
         };
