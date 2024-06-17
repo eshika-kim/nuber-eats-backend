@@ -5,8 +5,9 @@ import { Injectable } from '@nestjs/common';
 import { CreateAccountInput } from './dto/create-account.dto';
 import { LoginInput } from 'src/restaurants/dto/login.dto';
 import { JwtService } from 'src/jwt/jwt.service';
-import { EditProfileInput } from './dto/edit-profile.dto';
+import { EditProfileInput, EditProfileOutput } from './dto/edit-profile.dto';
 import { Verification } from './entities/verification.entity';
+import { VerifyEmailOutput } from './dto/verify-email.dto';
 
 @Injectable()
 export class UsersService {
@@ -46,7 +47,10 @@ export class UsersService {
     password,
   }: LoginInput): Promise<{ ok: boolean; error?: string; token?: string }> {
     try {
-      const user = await this.users.findOne({ where: { email } });
+      const user = await this.users.findOne({
+        where: { email },
+        select: ['id', 'password'],
+      });
       if (!user) {
         return {
           ok: false,
@@ -74,22 +78,68 @@ export class UsersService {
   }
 
   async findById(id: number) {
-    return await this.users.findOneBy({ id });
+    try {
+      const user = await this.users.findOneBy({ id });
+      if (!user) throw new Error('user not found');
+      return {
+        ok: true,
+        user,
+      };
+    } catch (e) {
+      return {
+        ok: false,
+        error: e,
+      };
+    }
   }
 
-  async editProfile(userId: number, editProfileInput: EditProfileInput) {
-    const { email, password } = editProfileInput;
-    // spread 연산자를 이용해 ...editProfileInput을 사용해도 됨
-    // return await this.users.update(userId, { email, password });
-    // => typeorm의 update는 특정 entity를 불러내서 저장되는 것이 아니라 일치하는 것을 그냥 업데이트하고
-    // 일치하는 것이 없으면 아무일도 일어나지 않아 dto의 BeforeUpdate가 실행되지 않는다.
-    const user = await this.users.findOneBy({ id: userId });
-    // 해당하는 entity를 불러온 후
-    if (email) user.email = email;
-    if (password) user.password = password;
-    await this.verification.save(this.verification.create({ user }));
-    // 저장하고
-    return await this.users.save(user);
-    // db에 save하면 Beforeupdate hook 이 불러와지는 것을 확인할 수 있다.
+  async editProfile(
+    userId: number,
+    editProfileInput: EditProfileInput,
+  ): Promise<EditProfileOutput> {
+    try {
+      const { email, password } = editProfileInput;
+      // spread 연산자를 이용해 ...editProfileInput을 사용해도 됨
+      // return await this.users.update(userId, { email, password });
+      // => typeorm의 update는 특정 entity를 불러내서 저장되는 것이 아니라 일치하는 것을 그냥 업데이트하고
+      // 일치하는 것이 없으면 아무일도 일어나지 않아 dto의 BeforeUpdate가 실행되지 않는다.
+      const user = await this.users.findOneBy({ id: userId });
+      // 해당하는 entity를 불러온 후
+      if (email) user.email = email;
+      if (password) user.password = password;
+      await this.verification.save(this.verification.create({ user }));
+      // 저장하고
+      await this.users.save(user);
+      // db에 save하면 Beforeupdate hook 이 불러와지는 것을 확인할 수 있다.
+      return;
+      {
+        ok: true;
+      }
+    } catch (e) {
+      return {
+        ok: false,
+        error: e,
+      };
+    }
+  }
+
+  async verifyEmail(code: string): Promise<VerifyEmailOutput> {
+    try {
+      const verification = await this.verification.findOne({
+        where: { code },
+        relations: ['user'],
+      });
+      if (verification) {
+        verification.user.verified = true;
+        this.users.save(verification.user);
+        return {
+          ok: true,
+        };
+      }
+    } catch (e) {
+      return {
+        ok: false,
+      };
+    }
   }
 }
