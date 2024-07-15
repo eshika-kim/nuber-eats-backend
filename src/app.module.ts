@@ -46,7 +46,7 @@ import { MailModule } from './mail/mail.module';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD, // ps는 localhost에서는 pw를 물어보지 않도록 설정되어 있음 아무거나 써도됨
       database: process.env.DB_DATABASE,
-      synchronize: process.env.NODE_ENV !== 'prod',
+      synchronize: false,
       logging: true,
       entities: [Restaurant, User, Verification],
     }),

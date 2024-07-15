@@ -140,6 +140,7 @@ export class UsersService {
     } catch (e) {
       return {
         ok: false,
+        error: e.message,
       };
     }
   }
