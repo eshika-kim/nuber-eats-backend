@@ -30,8 +30,6 @@ export class MailService {
           body: form,
         },
       );
-      console.log(`Response Status: ${response.statusCode}`);
-      console.log(`Response Body: ${response.body}`);
     } catch (error) {
       console.error('Error sending email:', error);
     }
