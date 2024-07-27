@@ -12,6 +12,7 @@ const mockRepository = () => ({
   findOne: jest.fn(),
   save: jest.fn(),
   create: jest.fn(),
+  findOneOrFail: jest.fn(),
 });
 
 // 가짜 jwt service
@@ -149,5 +150,21 @@ describe('UsersService', () => {
       });
     });
   });
+
+  describe('findById', () => {
+    it('should find an existing user', async () => {
+      const userInformation = { id: 1 };
+      usersRepository.findOneOrFail.mockResolvedValue(userInformation);
+      const result = await service.findById(1);
+      expect(result).toEqual({ ok: true, user: userInformation });
+    });
+    it('should fail if user is not found', async () => {
+      usersRepository.findOneOrFail.mockRejectedValue(new Error());
+      const result = await service.findById(1);
+      expect(result).toEqual({
+        ok: false,
+        error: 'user not found',
+      });
+    });
+  });
 });
-// 테스트

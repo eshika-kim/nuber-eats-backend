@@ -79,8 +79,7 @@ export class UsersService {
 
   async findById(id: number) {
     try {
-      const user = await this.users.findOneBy({ id });
-      if (!user) throw new Error('user not found');
+      const user = await this.users.findOneOrFail({ where: { id } });
       return {
         ok: true,
         user,
@@ -88,7 +87,7 @@ export class UsersService {
     } catch (e) {
       return {
         ok: false,
-        error: e,
+        error: 'user not found',
       };
     }
   }
