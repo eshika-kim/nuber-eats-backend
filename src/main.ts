@@ -8,5 +8,6 @@ async function bootstrap() {
   // class-validation을 이용할 수 있음
   app.useGlobalPipes(new ValidationPipe());
   await app.listen(3000);
+  console.log('server is running 🚀');
 }
 bootstrap();
