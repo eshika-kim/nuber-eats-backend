@@ -24,6 +24,8 @@ import { ExcelController } from './excel/excel.controller';
 import { ExcelService } from './excel/excel.service';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { ScheduleModule } from './schedule/schedule.module';
+import { Schedule } from './schedule/entity/schedule.entity';
 
 @Module({
   imports: [
@@ -51,10 +53,10 @@ import { AppService } from './app.service';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD, // ps는 localhost에서는 pw를 물어보지 않도록 설정되어 있음 아무거나 써도됨
       database: process.env.DB_DATABASE,
-      synchronize: false,
+      synchronize: true,
       logging:
         process.env.NODE_ENV !== 'prod' && process.env.NODE_ENV !== 'test',
-      entities: [Restaurant, User, Verification],
+      entities: [Restaurant, User, Verification, Schedule],
     }),
     GraphQLModule.forRoot({
       autoSchemaFile: true,
@@ -73,6 +75,7 @@ import { AppService } from './app.service';
       fromEmail: process.env.MAILGUN_FROM_EMAIL,
     }),
     ExcelModule,
+    ScheduleModule,
   ],
   controllers: [AppController],
   providers: [AppService],
