@@ -19,7 +19,6 @@ export class RestaurantService {
   constructor(
     @InjectRepository(Restaurant)
     private readonly restaurants: Repository<Restaurant>,
-    @InjectRepository(Category)
     private readonly category: CategoryRepository,
   ) {}
   getAll(): Promise<Restaurant[]> {
