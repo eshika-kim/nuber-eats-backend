@@ -26,7 +26,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ScheduleModule } from './schedule/schedule.module';
 import { Schedule } from './schedule/entity/schedule.entity';
-
+import { Category } from './restaurants/entities/category.entity';
+import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -56,12 +57,19 @@ import { Schedule } from './schedule/entity/schedule.entity';
       synchronize: true,
       logging:
         process.env.NODE_ENV !== 'prod' && process.env.NODE_ENV !== 'test',
-      entities: [Restaurant, User, Verification, Schedule],
+      entities: [Restaurant, User, Verification, Schedule, Category],
+      namingStrategy: new SnakeNamingStrategy(),
     }),
     GraphQLModule.forRoot({
       autoSchemaFile: true,
-      context: ({ req }) => ({ user: req['user'] }),
+      installSubscriptionHandlers: true,
       driver: ApolloDriver,
+      context: ({ req, connection }) => {
+        const TOKEN_KEY = 'x-jwt';
+        return {
+          token: req ? req.headers[TOKEN_KEY] : connection.context[TOKEN_KEY],
+        };
+      },
     }),
     RestaurantsModule,
     UsersModule,
@@ -80,11 +88,4 @@ import { Schedule } from './schedule/entity/schedule.entity';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(JwtMiddleware).forRoutes({
-      path: '/graphql',
-      method: RequestMethod.POST,
-    });
-  }
-}
+export class AppModule {}

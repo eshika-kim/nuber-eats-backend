@@ -21,15 +21,15 @@ export class MailService {
     form.append('text', content);
 
     try {
-      const response = await got.post(
-        `https://api.mailgun.net/v3/${this.options.domain}/messages`,
-        {
-          headers: {
-            Authorization: `Basic ${Buffer.from(`api:${this.options.apiKey}`).toString('base64')}`,
-          },
-          body: form,
-        },
-      );
+      // const response = await got.post(
+      //   `https://api.mailgun.net/v3/${this.options.domain}/messages`,
+      //   {
+      //     headers: {
+      //       Authorization: `Basic ${Buffer.from(`api:${this.options.apiKey}`).toString('base64')}`,
+      //     },
+      //     body: form,
+      //   },
+      // );
     } catch (error) {
       console.error('Error sending email:', error);
     }

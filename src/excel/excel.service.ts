@@ -7,7 +7,6 @@ export class ExcelService {
     try {
       const csvString = buffer.toString('utf-8');
       const records = await this.parseCSV(csvString);
-      console.log(records); // 디버깅을 위한 콘솔 로그
 
       // SQL 쿼리문 생성
       const insertStatement = records.map((row: any) => {
