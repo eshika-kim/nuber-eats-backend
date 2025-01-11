@@ -13,6 +13,8 @@ import {
   EditRestaurantOutput,
 } from './dto/edit-restaurant.dto';
 import { CategoryRepository } from './repositories/category.repository';
+import { DeleteRestaurantOutput } from './dto/delete-restaurant.dto';
+import { DeleteRestaurantInput } from './dto/delete-restaurant.dto';
 
 @Injectable()
 export class RestaurantService {
@@ -76,6 +78,35 @@ export class RestaurantService {
           ...(category && { category }),
         },
       ]);
+      return {
+        ok: true,
+      };
+    } catch (e) {
+      let error = e.message;
+      return {
+        ok: false,
+        error,
+      };
+    }
+  }
+
+  async deleteRestaurant(
+    owner: User,
+    input: DeleteRestaurantInput,
+  ): Promise<DeleteRestaurantOutput> {
+    try {
+      const restaurant = await this.restaurants.findOne({
+        where: { id: input.id },
+      });
+      if (!restaurant) {
+        throw new Error('Restaurant not found');
+      }
+      if (restaurant.ownerId !== owner.id) {
+        throw new Error('You are not this restaurant owner');
+      }
+
+      await this.restaurants.delete(restaurant);
+
       return {
         ok: true,
       };
