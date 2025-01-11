@@ -105,7 +105,7 @@ export class RestaurantService {
         throw new Error('You are not this restaurant owner');
       }
 
-      await this.restaurants.delete(restaurant);
+      await this.restaurants.delete(restaurant.id);
 
       return {
         ok: true,

@@ -26,8 +26,8 @@ export class UsersResolver {
     return await this.usersService.createAccount(createAccountInput);
   }
 
-  @Mutation((returns) => LoginOutput)
   @Role(['Any'])
+  @Mutation((returns) => LoginOutput)
   async login(@Args('input') loginInput: LoginInput): Promise<LoginOutput> {
     return await this.usersService.login(loginInput);
   }
