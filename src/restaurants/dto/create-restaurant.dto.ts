@@ -5,7 +5,7 @@ import {
   OmitType,
   PickType,
 } from '@nestjs/graphql';
-import { Restaurant } from '../entities/retaurant.entity';
+import { Restaurant } from '../entities/restaurant.entity';
 import { CoreOutput } from 'src/common/dtos/output.dto';
 
 // @ArgsType() // => resolver에서 input으로 받지 않을 때

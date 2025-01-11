@@ -16,7 +16,7 @@ registerEnumType(UserRole, { name: 'USER_ROLE' });
 import * as bcrypt from 'bcrypt';
 import { InternalServerErrorException } from '@nestjs/common';
 import { IsEmail, IsEnum } from 'class-validator';
-import { Restaurant } from 'src/restaurants/entities/retaurant.entity';
+import { Restaurant } from 'src/restaurants/entities/restaurant.entity';
 
 @InputType('UserInput', { isAbstract: true })
 @ObjectType()
