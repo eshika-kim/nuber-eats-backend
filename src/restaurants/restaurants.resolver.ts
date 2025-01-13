@@ -30,6 +30,7 @@ import {
   FindCategoryBySlugInput,
   FindCategoryBySlugOutput,
 } from './dto/category.dto';
+import { RestaurantInput, RestaurantOutput } from './dto/restaurants.dto';
 
 @Resolver()
 export class RestaurantResolver {
@@ -87,5 +88,12 @@ export class CategoryResolver {
     @Args('input') input: FindCategoryBySlugInput,
   ): Promise<FindCategoryBySlugOutput> {
     return await this.restaurantService.findCategoryBySlug(input);
+  }
+
+  @Query(() => RestaurantOutput)
+  async allRestaurants(
+    @Args('input') input: RestaurantInput,
+  ): Promise<RestaurantOutput> {
+    return await this.restaurantService.allRestaurants(input);
   }
 }

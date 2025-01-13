@@ -20,6 +20,8 @@ import {
   FindCategoryBySlugInput,
   FindCategoryBySlugOutput,
 } from './dto/category.dto';
+import { RestaurantInput, RestaurantOutput } from './dto/restaurants.dto';
+import { Args } from '@nestjs/graphql';
 
 @Injectable()
 export class RestaurantService {
@@ -147,17 +149,50 @@ export class RestaurantService {
     });
   }
 
-  async findCategoryBySlug(
-    input: FindCategoryBySlugInput,
-  ): Promise<FindCategoryBySlugOutput> {
+  async findCategoryBySlug({
+    slug,
+    page,
+  }: FindCategoryBySlugInput): Promise<FindCategoryBySlugOutput> {
     try {
       const category = await this.category.findOne({
-        where: { slug: input.slug },
-        relations: ['restaurants'],
+        where: { slug },
       });
+      const restaurants = await this.restaurants.find({
+        where: { category: { id: category.id } },
+        take: 25,
+        skip: (page - 1) * 25,
+      });
+
+      const totalResults = await this.countRestaurants(category);
       return {
         ok: true,
         category,
+        restaurants,
+        totalPages: Math.ceil(totalResults / 25),
+      };
+    } catch (e) {
+      let error = e.message;
+      return {
+        ok: false,
+        error,
+      };
+    }
+  }
+
+  async allRestaurants(
+    @Args('input') { page }: RestaurantInput,
+  ): Promise<RestaurantOutput> {
+    try {
+      const [restaurants, totalResults] = await this.restaurants.findAndCount({
+        take: 25,
+        skip: (page - 1) * 25,
+      });
+
+      return {
+        ok: true,
+        results: restaurants,
+        totalPages: Math.ceil(totalResults / 25),
+        totalResults,
       };
     } catch (e) {
       let error = e.message;
