@@ -26,6 +26,10 @@ import {
 } from './dto/delete-restaurant.dto';
 import { Category } from './entities/category.entity';
 import { AllCategoryListOutput } from './dto/all-category.dto';
+import {
+  FindCategoryBySlugInput,
+  FindCategoryBySlugOutput,
+} from './dto/category.dto';
 
 @Resolver()
 export class RestaurantResolver {
@@ -76,5 +80,12 @@ export class CategoryResolver {
   @Query(() => AllCategoryListOutput)
   async allCategoryList(): Promise<AllCategoryListOutput> {
     return await this.restaurantService.allCategoryList();
+  }
+
+  @Query(() => FindCategoryBySlugOutput)
+  async findCategoryBySlug(
+    @Args('input') input: FindCategoryBySlugInput,
+  ): Promise<FindCategoryBySlugOutput> {
+    return await this.restaurantService.findCategoryBySlug(input);
   }
 }

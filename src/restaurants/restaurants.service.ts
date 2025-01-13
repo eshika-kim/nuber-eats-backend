@@ -16,6 +16,10 @@ import { CategoryRepository } from './repositories/category.repository';
 import { DeleteRestaurantOutput } from './dto/delete-restaurant.dto';
 import { DeleteRestaurantInput } from './dto/delete-restaurant.dto';
 import { AllCategoryListOutput } from './dto/all-category.dto';
+import {
+  FindCategoryBySlugInput,
+  FindCategoryBySlugOutput,
+} from './dto/category.dto';
 
 @Injectable()
 export class RestaurantService {
@@ -141,5 +145,26 @@ export class RestaurantService {
     return await this.restaurants.count({
       where: { category: { id: category.id } },
     });
+  }
+
+  async findCategoryBySlug(
+    input: FindCategoryBySlugInput,
+  ): Promise<FindCategoryBySlugOutput> {
+    try {
+      const category = await this.category.findOne({
+        where: { slug: input.slug },
+        relations: ['restaurants'],
+      });
+      return {
+        ok: true,
+        category,
+      };
+    } catch (e) {
+      let error = e.message;
+      return {
+        ok: false,
+        error,
+      };
+    }
   }
 }
