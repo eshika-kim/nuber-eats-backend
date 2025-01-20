@@ -123,9 +123,12 @@ export class CategoryResolver {
 export class DishResolver {
   constructor(private readonly restaurantService: RestaurantService) {}
 
-  @Query(() => CreateDishOutput)
+  @Mutation(() => CreateDishOutput)
   @Role(['Owner'])
-  createDish(@AuthUser() owner: User, @Args('input') input: CreateDishInput) {
+  createDish(
+    @AuthUser() owner: User,
+    @Args('input') input: CreateDishInput,
+  ): Promise<CreateDishOutput> {
     return this.restaurantService.createDish(owner, input);
   }
 }

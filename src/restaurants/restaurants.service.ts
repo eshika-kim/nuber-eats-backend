@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { Restaurant } from './entities/restaurant.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Like, Raw, Repository } from 'typeorm';
@@ -26,7 +26,8 @@ import { RestaurantInput } from './dto/restaurant.dto';
 import { RestaurantOutput } from './dto/restaurant.dto';
 import { SearchRestaurantOutput } from './dto/search-restaurant.dto';
 import { SearchRestaurantInput } from './dto/search-restaurant.dto';
-import { CreateDishInput } from './dto/create-dish.dto';
+import { CreateDishInput, CreateDishOutput } from './dto/create-dish.dto';
+import { Dish } from './entities/dish.entity';
 
 @Injectable()
 export class RestaurantService {
@@ -34,6 +35,8 @@ export class RestaurantService {
     @InjectRepository(Restaurant)
     private readonly restaurants: Repository<Restaurant>,
     private readonly category: CategoryRepository,
+    @InjectRepository(Dish)
+    private readonly dish: Repository<Dish>,
   ) {}
   getAll(): Promise<Restaurant[]> {
     return this.restaurants.find();
@@ -256,5 +259,39 @@ export class RestaurantService {
     }
   }
 
-  async createDish(owner: User, input: CreateDishInput) {}
+  async createDish(
+    owner: User,
+    input: CreateDishInput,
+  ): Promise<CreateDishOutput> {
+    try {
+      const restaurant = await this.restaurants.findOne({
+        where: { id: input.restaurantId },
+      });
+      if (!restaurant) {
+        return {
+          ok: false,
+          error: `Restaurant not found`,
+        };
+      }
+      if (owner.id !== restaurant.ownerId) {
+        return {
+          ok: false,
+          error: `You can't do that.`,
+        };
+      }
+
+      const dish = await this.dish.save(
+        this.dish.create({ ...input, restaurant }),
+      );
+      console.log(dish);
+      return {
+        ok: true,
+      };
+    } catch (e) {
+      return {
+        ok: true,
+        error: e.message,
+      };
+    }
+  }
 }
