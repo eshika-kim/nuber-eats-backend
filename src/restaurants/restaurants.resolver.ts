@@ -38,6 +38,8 @@ import {
   SearchRestaurantOutput,
 } from './dto/search-restaurant.dto';
 import { CreateDishInput, CreateDishOutput } from './dto/create-dish.dto';
+import { EditDishInput, EditDishOutput } from './dto/edit-dish.dto';
+import { DeleteDishInput, DeleteDishOutput } from './dto/delete-dish.dto';
 
 @Resolver()
 export class RestaurantResolver {
@@ -130,5 +132,23 @@ export class DishResolver {
     @Args('input') input: CreateDishInput,
   ): Promise<CreateDishOutput> {
     return this.restaurantService.createDish(owner, input);
+  }
+
+  @Mutation(() => EditDishOutput)
+  @Role(['Owner'])
+  editDish(
+    @AuthUser() owner: User,
+    @Args('input') input: EditDishInput,
+  ): Promise<EditDishOutput> {
+    return this.restaurantService.editDish(owner, input);
+  }
+
+  @Mutation(() => DeleteDishOutput)
+  @Role(['Owner'])
+  deleteDish(
+    @AuthUser() owner: User,
+    @Args('input') input: DeleteDishInput,
+  ): Promise<DeleteDishOutput> {
+    return this.restaurantService.deleteDish(owner, input);
   }
 }

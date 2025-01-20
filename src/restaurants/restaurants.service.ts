@@ -28,6 +28,8 @@ import { SearchRestaurantOutput } from './dto/search-restaurant.dto';
 import { SearchRestaurantInput } from './dto/search-restaurant.dto';
 import { CreateDishInput, CreateDishOutput } from './dto/create-dish.dto';
 import { Dish } from './entities/dish.entity';
+import { EditDishInput, EditDishOutput } from './dto/edit-dish.dto';
+import { DeleteDishInput, DeleteDishOutput } from './dto/delete-dish.dto';
 
 @Injectable()
 export class RestaurantService {
@@ -284,6 +286,70 @@ export class RestaurantService {
         this.dish.create({ ...input, restaurant }),
       );
       console.log(dish);
+      return {
+        ok: true,
+      };
+    } catch (e) {
+      return {
+        ok: true,
+        error: e.message,
+      };
+    }
+  }
+
+  async editDish(owner: User, input: EditDishInput): Promise<EditDishOutput> {
+    try {
+      const dish = await this.dish.findOne({
+        where: { id: input.dishId },
+        relations: ['restaurant'],
+      });
+      if (!dish) {
+        return {
+          ok: false,
+          error: `Dish couldn't found`,
+        };
+      }
+      if (dish.restaurant.ownerId !== owner.id) {
+        return {
+          ok: false,
+          error: `You can't do that.`,
+        };
+      }
+
+      await this.dish.save([{ id: input.dishId, ...input }]);
+      return {
+        ok: true,
+      };
+    } catch (e) {
+      return {
+        ok: true,
+        error: e.message,
+      };
+    }
+  }
+
+  async deleteDish(
+    owner: User,
+    input: DeleteDishInput,
+  ): Promise<DeleteDishOutput> {
+    try {
+      const dish = await this.dish.findOne({
+        where: { id: input.dishId },
+        relations: ['restaurant'],
+      });
+      if (!dish) {
+        return {
+          ok: false,
+          error: `Dish couldn't found`,
+        };
+      }
+      if (dish.restaurant.ownerId !== owner.id) {
+        return {
+          ok: false,
+          error: `You can't do that.`,
+        };
+      }
+      await this.dish.delete({ id: input.dishId });
       return {
         ok: true,
       };
