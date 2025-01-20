@@ -28,6 +28,7 @@ import { ScheduleModule } from './schedule/schedule.module';
 import { Schedule } from './schedule/entity/schedule.entity';
 import { Category } from './restaurants/entities/category.entity';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
+import { Dish } from './restaurants/entities/dish.entity';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -57,7 +58,7 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
       synchronize: true,
       logging:
         process.env.NODE_ENV !== 'prod' && process.env.NODE_ENV !== 'test',
-      entities: [Restaurant, User, Verification, Schedule, Category],
+      entities: [Restaurant, User, Verification, Schedule, Category, Dish],
       namingStrategy: new SnakeNamingStrategy(),
     }),
     GraphQLModule.forRoot({

@@ -109,7 +109,7 @@ export class CategoryResolver {
   ): Promise<RestaurantOutput> {
     return await this.restaurantService.findRestaurantById(input);
   }
-
+v
   @Query(() => SearchRestaurantOutput)
   async searchRestaurants(
     @Args('input') input: SearchRestaurantInput,
