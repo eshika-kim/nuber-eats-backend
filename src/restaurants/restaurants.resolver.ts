@@ -37,6 +37,7 @@ import {
   SearchRestaurantInput,
   SearchRestaurantOutput,
 } from './dto/search-restaurant.dto';
+import { CreateDishInput, CreateDishOutput } from './dto/create-dish.dto';
 
 @Resolver()
 export class RestaurantResolver {
@@ -109,11 +110,22 @@ export class CategoryResolver {
   ): Promise<RestaurantOutput> {
     return await this.restaurantService.findRestaurantById(input);
   }
-v
+
   @Query(() => SearchRestaurantOutput)
   async searchRestaurants(
     @Args('input') input: SearchRestaurantInput,
   ): Promise<SearchRestaurantOutput> {
     return await this.restaurantService.searchRestaurantByName(input);
+  }
+}
+
+@Resolver()
+export class DishResolver {
+  constructor(private readonly restaurantService: RestaurantService) {}
+
+  @Query(() => CreateDishOutput)
+  @Role(['Owner'])
+  createDish(@AuthUser() owner: User, @Args('input') input: CreateDishInput) {
+    return this.restaurantService.createDish(owner, input);
   }
 }

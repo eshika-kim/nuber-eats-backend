@@ -26,6 +26,7 @@ import { RestaurantInput } from './dto/restaurant.dto';
 import { RestaurantOutput } from './dto/restaurant.dto';
 import { SearchRestaurantOutput } from './dto/search-restaurant.dto';
 import { SearchRestaurantInput } from './dto/search-restaurant.dto';
+import { CreateDishInput } from './dto/create-dish.dto';
 
 @Injectable()
 export class RestaurantService {
@@ -213,6 +214,7 @@ export class RestaurantService {
     try {
       const restaurant = await this.restaurants.findOne({
         where: { id: restaurantId },
+        relations: ['menu'],
       });
 
       if (!restaurant) {
@@ -253,4 +255,6 @@ export class RestaurantService {
       };
     }
   }
+
+  async createDish(owner: User, input: CreateDishInput) {}
 }

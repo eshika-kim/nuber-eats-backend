@@ -4,6 +4,19 @@ import { CoreEntity } from 'src/common/entities/core.entity';
 import { IsNumber, IsString, Length } from 'class-validator';
 import { Restaurant } from './restaurant.entity';
 
+@InputType('DishOptionsInputType', { isAbstract: true })
+@ObjectType()
+export class DishOptions {
+  @Field(() => String)
+  name: string;
+
+  @Field(() => [String], { nullable: true })
+  choices?: string[];
+
+  @Field(() => Int, { nullable: true })
+  extra?: number;
+}
+
 @InputType('DishInputType', { isAbstract: true }) // 직접 주입해서 사용하는 것이 아니라 확장해서 사용하는 것. 이 클래스가 실제로
 // db에 sync 되면 안되므로, 또한 다른 클래스가 상속받아 사용할 수도있으므로
 @ObjectType()
@@ -39,4 +52,8 @@ export class Dish extends CoreEntity {
 
   @RelationId((dish: Dish) => dish.restaurant)
   restaurantId: number;
+
+  @Field(() => [DishOptions], { nullable: true })
+  @Column({ type: 'json', nullable: true })
+  options?: DishOptions[];
 }
