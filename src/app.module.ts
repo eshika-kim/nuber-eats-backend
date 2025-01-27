@@ -12,16 +12,12 @@ import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
 import { Restaurant } from './restaurants/entities/restaurant.entity';
 import { UsersModule } from './users/users.module';
-import { CommonModule } from './common/common.module';
 import { User } from './users/entities/user.entity';
 import { JwtModule } from './jwt/jwt.module';
-import { JwtMiddleware } from './jwt/jwt.middleware';
 import { AuthModule } from './auth/auth.module';
 import { Verification } from './users/entities/verification.entity';
 import { MailModule } from './mail/mail.module';
 import { ExcelModule } from './excel/excel.module';
-import { ExcelController } from './excel/excel.controller';
-import { ExcelService } from './excel/excel.service';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ScheduleModule } from './schedule/schedule.module';
@@ -31,6 +27,7 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { Dish } from './restaurants/entities/dish.entity';
 import { OrdersModule } from './orders/orders.module';
 import { Order } from './orders/entities/order.entity';
+import { OrderItem } from './orders/entities/order-item.entity';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -68,6 +65,7 @@ import { Order } from './orders/entities/order.entity';
         Category,
         Dish,
         Order,
+        OrderItem,
       ],
       namingStrategy: new SnakeNamingStrategy(),
     }),

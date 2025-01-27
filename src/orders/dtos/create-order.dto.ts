@@ -3,7 +3,7 @@ import { Order } from '../entities/order.entity';
 import { CoreOutput } from 'src/common/dtos/output.dto';
 
 @InputType()
-export class CreateOrderInput extends PickType(Order, ['dishes']) {
+export class CreateOrderInput extends PickType(Order, ['items']) {
   @Field(() => Int)
   restaurantId: number;
 }
