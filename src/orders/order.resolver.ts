@@ -8,12 +8,14 @@ import { Role } from 'src/auth/role.decorator';
 
 @Resolver(() => Order)
 export class OrderResolver {
-  constructor(orderService: OrderService) {}
+  constructor(private readonly orderService: OrderService) {}
 
   @Mutation(() => CreateOrderOutput)
   @Role(['Client'])
-  createOrder(
+  async createOrder(
     @Args('input') input: CreateOrderInput,
     @AuthUser() customer: User,
-  ) {}
+  ) {
+    return await this.orderService.createOrder(input, customer);
+  }
 }

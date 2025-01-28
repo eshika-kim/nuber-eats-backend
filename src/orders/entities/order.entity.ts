@@ -31,25 +31,25 @@ export class Order extends CoreEntity {
 
   @ManyToOne(() => User, (user) => user.rides, { onDelete: 'SET NULL' })
   @Field(() => User, { nullable: true })
-  driver: User;
+  driver?: User;
 
   @ManyToOne(() => Restaurant, (restaurant) => restaurant.order, {
     onDelete: 'SET NULL',
   })
-  @Field(() => Restaurant)
-  restaurant: Restaurant;
+  @Field(() => Restaurant, { nullable: true })
+  restaurant?: Restaurant;
 
   @ManyToMany(() => OrderItem)
   @JoinTable()
   @Field(() => [OrderItem])
   items: OrderItem[];
 
-  @Column()
-  @Field(() => Float)
+  @Column({ nullable: true })
+  @Field(() => Float, { nullable: true })
   @IsNumber()
-  total: number;
+  total?: number;
 
-  @Column({ type: 'enum', enum: OrderStatus })
+  @Column({ type: 'enum', enum: OrderStatus, default: OrderStatus.Pending })
   @Field(() => OrderStatus)
   @IsEnum(OrderStatus)
   status: OrderStatus;
